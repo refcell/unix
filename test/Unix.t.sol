@@ -53,17 +53,22 @@ contract UnixTest is Test {
     assertEq(last_dir, "unix");
   }
 
-  // function testWget() public {
-  //   // Fetch an image, then delete it
-  //   string memory img = "https://picsum.photos/id/10/2500/1667.jpg";
-  //   (uint256 success, bytes memory data) = string.concat("wget ", img).run();
-  //   assertEq(success, 1);
-  //   assertEq(string(data), img);
+  function testWget() public {
+    // Fetch an image, then delete it
+    string memory img = "https://picsum.photos/id/10/2500/1667.jpg";
+    (uint256 success, bytes memory data) = string.concat("wget ", img).run();
 
-  //   // Delete the image file
-  //   (success,) = string.concat("rm ", img).run();
-  //   assertEq(success, 1);
-  // }
+    // Expect response of 302 since the resource is at a different url
+    assertEq(success, 302);
+    assertEq(string(data), "1667.jpg");
+    console2.log(string.concat("Successful wget: ", string(data)));
+
+    // Delete the image file
+    console2.log("Removing the downloaded file...");
+    (success,) = string.concat("rm ", string(data)).run();
+    assertEq(success, 1);
+    console2.log("Removed 1667.jpg");
+  }
 
   function testSed() public {
     // Write a single phrase to a temp file

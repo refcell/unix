@@ -1,14 +1,16 @@
 #! /bin/bash
 
-response=$(wget "$@")
+# Download the file
+response=$(wget -q "$@")
 
+# Get the filename
+filename=$(echo "$@" | sed 's|.*/||')
 
-# echo "${response}"
-# status=$(tail -n1 <<< "$response")  # get the last line
-# data=$(sed '$ d' <<< "$response")   # get all but the last line which contains the status code
+# Remove newline chars
+filename=$(echo "$filename" | tr -d '\n')
 
-# # Remove newline char from data str
-# data=$(echo "$data" | tr -d '\n')
+# Grab the response
+http_code=$(curl -o /dev/null --silent --head --write-out '%{http_code}\n' "$@")
 
 # Encode the response data
-cast abi-encode "response(uint256,string)" "$status" "$data"
+cast abi-encode "response(uint256,string)" "$http_code" "$filename"
