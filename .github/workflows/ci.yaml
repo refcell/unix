@@ -31,7 +31,8 @@ jobs:
       - name: Run scripts
         run: |
           ls -lsa
-          for file in "./script/"; do
+          ls script/
+          for file in "script/"; do
             forge script $file
           done
 
