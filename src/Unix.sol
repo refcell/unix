@@ -6,7 +6,6 @@ import {Vm} from "forge-std/Vm.sol";
 import {strings} from "strings/strings.sol";
 
 library Unix {
-
   using strings for *;
 
   Vm constant vm = Vm(address(bytes20(uint160(uint256(keccak256("hevm cheat code"))))));
@@ -36,33 +35,42 @@ library Unix {
 
     // Match on commands
     if (compareStrings(command, "echo")) {
-      return echo(args);
+      return exec("echo", args);
     }
     if (compareStrings(command, "rm")) {
-      return rm(args);
+      return exec("rm", args);
+    }
+    if (compareStrings(command, "pwd")) {
+      return exec("pwd");
+    }
+    if (compareStrings(command, "wget")) {
+      return exec("wget", args);
+    }
+    if (compareStrings(command, "sed")) {
+      return exec("sed", args);
     }
 
     // Otherwise, fail with unsupported command
     return (0, abi.encode("FAILURE: Command ", command, " not found!"));
   }
 
-  /// @notice Echo's the given args
-  function echo(string memory args) internal returns (uint256, bytes memory) {
-    string[] memory echocmds = new string[](2);
-    echocmds[0] = "./src/echo.sh";
-    echocmds[1] = args;
-    bytes memory res = vm.ffi(echocmds);
-    (uint256 success, bytes memory data) = abi.decode(res, (uint256, bytes));
-    return (success, data);
+  /// @notice Executes a script with no args
+  function exec(string memory script) internal returns (uint256, bytes memory) {
+    string[] memory cmds = new string[](2);
+    cmds[0] = string.concat("./src/", script, ".sh");
+    return decode(vm.ffi(cmds));
   }
 
-  /// @notice Removes the given file
-  function rm(string memory file) internal returns (uint256, bytes memory) {
-    string[] memory rmcmds = new string[](2);
-    rmcmds[0] = "./src/rm.sh";
-    rmcmds[1] = file;
-    bytes memory res = vm.ffi(rmcmds);
-    (uint256 success, bytes memory data) = abi.decode(res, (uint256, bytes));
-    return (success, data);
+  /// @notice Executes a bash script by name with one param
+  function exec(string memory script, string memory params) internal returns (uint256, bytes memory) {
+    string[] memory cmds = new string[](2);
+    cmds[0] = string.concat("./src/", script, ".sh");
+    cmds[1] = params;
+    return decode(vm.ffi(cmds));
+  }
+
+  function decode(bytes memory data) internal pure returns (uint256, bytes memory) {
+    (uint256 success, bytes memory s) = abi.decode(data, (uint256, bytes));
+    return (success, s);
   }
 }
