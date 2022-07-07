@@ -30,9 +30,9 @@ jobs:
 
       - name: Run scripts
         run: |
-          for file in ./script/*
-          do
-            forge script file
+          ls -lsa
+          for file in "./script/"; do
+            forge script $file
           done
 
       - name: Run Forge tests
