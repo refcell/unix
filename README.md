@@ -36,10 +36,16 @@ using Unix for *;
 3. Run your shell commands:
 ```solidity
 // Cat a file
-(uint256 status, bytes memory data) = "cat \"README.md\"".run();
+(uint256 status, bytes memory data) = "cat README.md".run();
+// string(data) == <contents of README.md>
 
 // Echo a string
-(uint256 status, bytes memory data) = "echo \"Hello World\"".run();
+(uint256 status, bytes memory data) = "echo Hello World".run();
+// string(data) == "Hello World"
+
+// Print the working directory
+(uint256 status, bytes memory data) = "pwd".run();
+// string(data) == <working directory>
 ```
 
 We have provided extensive examples in [scripts](./script/) and further completeness is demonstrated in [tests](./test/Unix.t.sol).
