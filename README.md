@@ -1,6 +1,6 @@
 <img align="right" width="150" height="150" top="100" src="./assets/unix.png">
 
-# unix • [![ci](https://github.com/abigger87/unix/actions/workflows/ci.yaml/badge.svg?label=ci)](https://github.com/abigger87/unix/actions/workflows/ci.yaml) [![license](https://img.shields.io/badge/License-Apache_2.0-blue.svg?label=license)](https://opensource.org/licenses/Apache-2.0) [![size](https://img.shields.io/github/languages/code-size/abigger87/unix.svg?color=pink&label=size)](https://img.shields.io/github/languages/code-size/abigger87/unix?label=size)
+# unix • [![ci](https://github.com/abigger87/unix/actions/workflows/ci.yaml/badge.svg?label=ci)](https://github.com/abigger87/unix/actions/workflows/ci.yaml) [![license](https://img.shields.io/badge/License-Apache_2.0-blue.svg?label=license)](https://opensource.org/licenses/Apache-2.0) [![size](https://img.shields.io/github/languages/code-size/abigger87/unix.svg?color=orange&label=size)](https://img.shields.io/github/languages/code-size/abigger87/unix?label=size)
 
 A **lightweight**, **extensible** [foundry](https://github.com/foundry-rs/foundry) library for shell scripting.
 
