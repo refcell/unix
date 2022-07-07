@@ -36,16 +36,33 @@ library Unix {
 
     // Match on commands
     if (compareStrings(command, "echo")) {
-      // Run the echo command
-      string[] memory echo = new string[](2);
-      echo[0] = "./src/echo.sh";
-      echo[1] = args;
-      bytes memory res = vm.ffi(echo);
-      (success, data) = abi.decode(res, (uint256, bytes));
-      return (success, data);
+      return echo(args);
+    }
+    if (compareStrings(command, "rm")) {
+      return rm(args);
     }
 
-    // Otherwise, fail
+    // Otherwise, fail with unsupported command
     return (0, abi.encode("FAILURE: Command ", command, " not found!"));
+  }
+
+  /// @notice Echo's the given args
+  function echo(string memory args) internal returns (uint256, bytes memory) {
+    string[] memory echocmds = new string[](2);
+    echocmds[0] = "./src/echo.sh";
+    echocmds[1] = args;
+    bytes memory res = vm.ffi(echocmds);
+    (uint256 success, bytes memory data) = abi.decode(res, (uint256, bytes));
+    return (success, data);
+  }
+
+  /// @notice Removes the given file
+  function rm(string memory file) internal returns (uint256, bytes memory) {
+    string[] memory rmcmds = new string[](2);
+    rmcmds[0] = "./src/rm.sh";
+    rmcmds[1] = file;
+    bytes memory res = vm.ffi(rmcmds);
+    (uint256 success, bytes memory data) = abi.decode(res, (uint256, bytes));
+    return (success, data);
   }
 }

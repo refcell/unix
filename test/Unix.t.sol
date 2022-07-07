@@ -16,4 +16,19 @@ contract UnixTest is Test {
     assertEq(success, 1);
     assertEq(string(data), "Hello World");
   }
+
+  function testRemove() public {
+    // Create the test file
+    vm.writeFile("__test.txt", "DATA DATA DATA");
+
+    // Remove the file
+    (uint256 success, bytes memory data) = "rm __test.txt".run();
+    assertEq(success, 1);
+    assertEq(string(data), "__test.txt");
+
+    // If we try to remove again, it should fail
+    (success, data) = "rm __test.txt".run();
+    assertEq(success, 0);
+    assertEq(string(data), "FILE_NOT_FOUND");
+  }
 }
