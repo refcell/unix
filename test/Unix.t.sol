@@ -17,7 +17,7 @@ contract UnixTest is Test {
     (uint256 success, bytes memory data) = "echo Hello World".run();
     assertEq(success, 1);
     assertEq(string(data), "Hello World");
-    console2.log(string.concat("Echoed: \"", string(data), "\""));
+    console2.log(string.concat("\nEchoed: \"", string(data), "\""));
   }
 
   function testRemove() public {
@@ -28,7 +28,7 @@ contract UnixTest is Test {
     (uint256 success, bytes memory data) = "rm __test.txt".run();
     assertEq(success, 1);
     assertEq(string(data), "__test.txt");
-    console2.log(string.concat("Successfully deleted: ", string(data)));
+    console2.log(string.concat("\nSuccessfully deleted: ", string(data)));
 
     // If we try to remove again, it should fail
     (success, data) = "rm __test.txt".run();
@@ -40,7 +40,7 @@ contract UnixTest is Test {
     // Get the current working directory
     (uint256 success, bytes memory data) = "pwd".run();
     assertEq(success, 1);
-    console2.log(string.concat("Current working directory: ", string(data)));
+    console2.log(string.concat("\nCurrent working directory: ", string(data)));
 
     // Verify that we are in the unix dir
     strings.slice memory s = string(data).toSlice();
@@ -61,13 +61,12 @@ contract UnixTest is Test {
     // Expect response of 302 since the resource is at a different url
     assertEq(success, 302);
     assertEq(string(data), "1667.jpg");
-    console2.log(string.concat("Successful wget: ", string(data)));
+    console2.log(string.concat("\nSuccessful wget: ", string(data), "\nRemoving the downloaded file..."));
 
     // Delete the image file
-    console2.log("Removing the downloaded file...");
     (success,) = string.concat("rm ", string(data)).run();
     assertEq(success, 1);
-    console2.log("Removed 1667.jpg");
+    console2.log("\nRemoved 1667.jpg");
   }
 
   function testSed() public {
@@ -78,10 +77,17 @@ contract UnixTest is Test {
     (uint256 success, bytes memory data) = string.concat("sed s/World/Unix/ __sed__test.txt").run();
     assertEq(success, 1);
     assertEq(string(data), "Hello Unix");
-    console2.log(string.concat("Substituted text: \"", string(data), "\""));
+    console2.log(string.concat("\nSubstituted text: \"", string(data), "\""));
 
     // Delete the temp file
     (success,) = string.concat("rm __sed__test.txt").run();
     assertEq(success, 1);
+  }
+
+  function testGrep() public {
+    (uint256 success, bytes memory data) = string.concat("grep foundry README.md").run();
+    assertEq(success, 1);
+    assertGt(data.length, 0);
+    console2.log(string.concat("\nGrepped text:\n\"", string(data), "\""));
   }
 }

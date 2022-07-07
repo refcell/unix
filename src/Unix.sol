@@ -49,6 +49,9 @@ library Unix {
     if (compareStrings(command, "sed")) {
       return exec("sed", args);
     }
+    if (compareStrings(command, "grep")) {
+      return exec("grep", args);
+    }
 
     // Otherwise, fail with unsupported command
     return (0, abi.encode("FAILURE: Command ", command, " not found!"));
