@@ -25,12 +25,12 @@ _NOTE: **unix** assumes you are running on a UNIX based machine with `bash`, `ta
 
 1. Add this import to your script or test:
 ```solidity
-import {Sh} from "unix/Sh.sol";
+import {Unix} from "unix/Unix.sol";
 ```
 
 2. Add this directive inside of your Contract:
 ```solidity
-using Sh for *;
+using Unix for *;
 ```
 
 3. Run your shell commands:
@@ -42,7 +42,7 @@ using Sh for *;
 (uint256 status, bytes memory data) = "echo \"Hello World\"".run();
 ```
 
-We have provided extensive examples in [scripts](./script/) and further completeness is demonstrated in [tests](./test/Sh.t.sol).
+We have provided extensive examples in [scripts](./script/) and further completeness is demonstrated in [tests](./test/Unix.t.sol).
 
 
 ## Contributing
