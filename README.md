@@ -44,6 +44,8 @@ using Unix for *;
 
 We have provided extensive examples in [scripts](./script/) and further completeness is demonstrated in [tests](./test/Unix.t.sol).
 
+To run scripts, simply prefix the script name with `forge s` like so: `forge s <script_name>`. For example, to run the [echo](./script/echo.s.sol) script, run: `forge s echo`.
+
 
 ## Contributing
 

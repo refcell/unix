@@ -6,14 +6,14 @@ import {Unix} from "src/Unix.sol";
 import {Script} from "forge-std/Script.sol";
 import {console2} from "forge-std/console2.sol";
 
-contract echo is Script {
+contract pwd is Script {
   using Unix for *;
 
   function setUp() public {}
 
   function run() public {
-    (uint256 success, bytes memory data) = "echo Hello World".run();
-    require(success == 1, "ECHO_CMD_FAILED");
-    console2.log(string.concat("\n> Echo: ", string(data)));
+    (uint256 success, bytes memory data) = "pwd".run();
+    require(success == 1, "PWD_CMD_FAILED");
+    console2.log(string.concat("\nWorking directory: ", string(data)));
   }
 }
