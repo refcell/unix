@@ -28,6 +28,13 @@ jobs:
           forge build --sizes
         id: build
 
+      - name: Run scripts
+        run: |
+          for file in ./script/*
+          do
+            forge script file
+          done
+
       - name: Run Forge tests
         run: |
           forge test -vvv
