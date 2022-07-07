@@ -1,9 +1,13 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity >=0.8.13 <0.9.0;
 
+import "forge-std/console.sol";
 import {Vm} from "forge-std/Vm.sol";
+import {strings} from "strings/strings.sol";
 
-library Sh {
+library Unix {
+
+  using strings for *;
 
   Vm constant vm = Vm(address(bytes20(uint160(uint256(keccak256("hevm cheat code"))))));
 
@@ -13,16 +17,21 @@ library Sh {
   }
 
   /// @notice Encodes an image at a url into a base64 string
-  function run(string memory input) internal pure returns (uint256 success, bytes memory data) {
+  function run(string memory input) internal returns (uint256 success, bytes memory data) {
     // Grab the first command from the input
     strings.slice memory s = input.toSlice();
     strings.slice memory delim = " ".toSlice();
+    uint256 delim_count = s.count(delim) + 1;
     string memory command = s.split(delim).toString();
 
     // Merge the rest of the input into the cmd args
     string memory args = "";
-    for (uint i = 1; i < parts.length; i++) {
-      args = string.concat(args, s.split(delim).toString());
+    for (uint i = 1; i < delim_count; i++) {
+      if (i + 1 == delim_count) {
+        args = string.concat(args, s.split(delim).toString());
+      } else {
+        args = string.concat(args, s.split(delim).toString(), " ");
+      }
     }
 
     // Match on commands
@@ -31,7 +40,9 @@ library Sh {
       string[] memory echo = new string[](2);
       echo[0] = "./src/echo.sh";
       echo[1] = args;
-      return vm.ffi(echo);
+      bytes memory res = vm.ffi(echo);
+      (success, data) = abi.decode(res, (uint256, bytes));
+      return (success, data);
     }
 
     // Otherwise, fail

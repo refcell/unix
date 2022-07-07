@@ -11,9 +11,9 @@ contract UnixTest is Test {
   function setUp() public {}
 
   function testEcho() public {
-    (uint256 success, bytes memory data) = "echo \"Hello World!\"".run();
+    (uint256 success, bytes memory data) = "echo Hello World".run();
 
     assertEq(success, 1);
-    assertEq(string(data), 'Hellow World!');
+    assertEq(string(data), "Hello World");
   }
 }
