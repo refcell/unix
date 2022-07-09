@@ -52,6 +52,9 @@ library Unix {
     if (compareStrings(command, "grep")) {
       return exec("grep", args);
     }
+    if (compareStrings(command, "mkdir")) {
+      return exec("mkdir", args);
+    }
 
     // Otherwise, fail with unsupported command
     return (0, abi.encode("FAILURE: Command ", command, " not found!"));

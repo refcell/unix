@@ -90,4 +90,27 @@ contract UnixTest is Test {
     assertGt(data.length, 0);
     console2.log(string.concat("\nGrepped text:\n\"", string(data), "\""));
   }
+
+  function testMkdir() public {
+    string memory dirName = "test-dir";
+
+    // Create the directory
+    (uint256 success, bytes memory data) = string.concat("mkdir ", dirName).run();
+
+    assertEq(success, 1);
+    console2.log(string.concat("\nSuccessfully created: ", dirName));
+
+    // If we try to create again, it should fail
+    (success, data) = string.concat("mkdir ", dirName).run();
+    assertEq(success, 0);
+    assertEq(string(data), "DIRECTORY_EXISTS");
+
+    // Clean up. Tidy!
+    string[] memory cmds = new string[](3);
+    cmds[0] = "rm";
+    cmds[1] = "-r";
+    cmds[2] = dirName;
+    vm.ffi(cmds);
+    console2.log(string.concat("\nDeleted: ", dirName));
+  }
 }
