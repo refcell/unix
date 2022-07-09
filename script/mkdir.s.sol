@@ -12,7 +12,7 @@ contract mkdir is Script {
   function setUp() public {}
 
   function run() public {
-    (uint256 success, bytes memory data) = "mkdir test-dir".run();
+    (uint256 success,) = "mkdir test-dir".run();
     require(success == 1, "MKDIR_CMD_FAILED");
     console2.log(string.concat("\nDirectory created: ","test-dir"));
   }
