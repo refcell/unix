@@ -7,7 +7,7 @@ import "forge-std/console2.sol";
 import {Test} from "forge-std/Test.sol";
 import {strings} from "strings/strings.sol";
 
-contract UnixTest is Test {
+contract LiteralTest is Test {
   using Unix for *;
   using strings for *;
 
