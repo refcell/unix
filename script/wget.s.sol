@@ -13,11 +13,11 @@ contract wget is Script {
 
   function run() public {
     // Fetch an image, then delete it
-    string memory img = "https://picsum.photos/id/10/2500/1667.jpg";
-    (uint256 success, bytes memory data) = string.concat("wget ", img).run();
-    require(success == 302, "WGET_CMD_FAILED");
-    console2.log(string.concat("\n--> wget\n", string(data), "\nRemoving the downloaded file..."));
-    removeFile(string(data));
+    // string memory img = "https://picsum.photos/id/10/2500/1667.jpg";
+    // (uint256 success, bytes memory data) = string.concat("wget ", img).run();
+    // require(success == 302, "WGET_CMD_FAILED");
+    // console2.log(string.concat("\n--> wget\n", string(data), "\nRemoving the downloaded file..."));
+    // removeFile(string(data));
   }
 
   function removeFile(string memory file) public {
