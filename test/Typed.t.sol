@@ -9,6 +9,7 @@ import {Test} from "forge-std/Test.sol";
 import {strings} from "strings/strings.sol";
 
 contract TypedTest is Test {
+  using Unix for *;
 
   function setUp() public {}
 

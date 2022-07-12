@@ -9,4 +9,14 @@ import {Command} from "src/Command.sol";
 /// @notice A Wrapper for sed <https://www.gnu.org/software/sed/manual/html_node/sed-commands-list.html>
 contract Sed is Command {
   // TODO: Add Commands...
+
+  constructor() {
+    ty = CommandType.SED;
+  }
+
+  /// @notice `-i` flag
+  function i() public returns (Sed) {
+    options.push("-i");
+    return this;
+  }
 }

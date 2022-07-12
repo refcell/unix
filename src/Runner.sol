@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity >=0.8.13 <0.9.0;
 
+import "forge-std/console2.sol";
 import {Vm} from "forge-std/Vm.sol";
 import {strings} from "strings/strings.sol";
 
@@ -31,33 +32,28 @@ contract Runner {
   }
 
   /// @notice Runs a single command
-  function run(Command inner) public returns (uint256, bytes memory) {
-    return exec(inner.churn());
+  function run(Command cmd) public returns (uint256, bytes memory) {
+    return cmd.run();
   }
 
   /// @notice Runs an arbitrary string input
-  function run(string memory input) internal returns (uint256 success, bytes memory data) {
-    return exec(input);
+  function run(string memory input) public returns (uint256 success, bytes memory data) {
+    Command c = new Command();
+    c.setRaw(input);
+    return c.run();
   }
 
   /// @notice Runs all registered commands
   function run() public returns (uint256 success, bytes memory data) {
     // TODO: properly group commands
-    return exec(flatten());
-  }
-
-  /// @notice Executes a command with provided options
-  function exec(string memory command, string[] memory options) internal returns (uint256, bytes memory) {
-    string memory args = flatten(options);
-    return exec(string.concat(command, " ", args));
-  }
-
-  /// @notice Executes a script with no args
-  function exec(string memory args) internal returns (uint256, bytes memory) {
-    string[] memory cmds = new string[](2);
-    cmds[0] = string.concat("./src/command.sh");
-    cmds[1] = args;
-    return decode(vm.ffi(cmds));
+    string memory combined = commands[0].inner();
+    for (uint256 i = 1; i < commands.length; i++) {
+      combined = string.concat(combined, " ", commands[i].inner());
+    }
+    console2.log(string.concat("Running commands: \"", combined, "\""));
+    // return exec(combined);
+    // TODO fix: execute all commands
+    return commands[0].run();
   }
 
   /// @notice Flattens arguments into a single string
@@ -71,11 +67,5 @@ contract Runner {
       }
     }
     return args;
-  }
-
-  /// @notice Decodes the command script response into (uint256, bytes)
-  function decode(bytes memory data) internal pure returns (uint256, bytes memory) {
-    (uint256 success, bytes memory s) = abi.decode(data, (uint256, bytes));
-    return (success, s);
   }
 }
