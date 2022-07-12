@@ -12,8 +12,8 @@ contract pwd is Script {
   function setUp() public {}
 
   function run() public {
-    (uint256 success, bytes memory data) = "pwd".run();
-    require(success == 1, "PWD_CMD_FAILED");
-    console2.log(string.concat("\nWorking directory: ", string(data)));
+    // (uint256 success, bytes memory data) = "pwd".run();
+    // require(success == 1, "PWD_CMD_FAILED");
+    // console2.log(string.concat("\nWorking directory: ", string(data)));
   }
 }

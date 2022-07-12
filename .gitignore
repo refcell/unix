@@ -2,3 +2,5 @@ cache/
 out/
 .DS_Store
 *.jpg
+
+__test.txt

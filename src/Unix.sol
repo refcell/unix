@@ -1,22 +1,38 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity >=0.8.13 <0.9.0;
 
-// import "forge-std/console2.sol";
-import {Vm} from "forge-std/Vm.sol";
+import "forge-std/console2.sol";
 import {strings} from "strings/strings.sol";
 
+// Abstractions
+import {Command} from "src/Command.sol";
+import {Runner} from "src/Runner.sol";
+
+// Commands
+import {Sed} from "src/commands/Sed.sol";
+import {Echo} from "src/commands/Echo.sol";
+import {Rm} from "src/commands/Rm.sol";
+
+/// @title Unix
+/// @author Andreas Bigger <https://github.com/abigger87>
+/// @notice An abstraction for executing unix shell commands.
 library Unix {
   using strings for *;
 
-  Vm constant vm = Vm(address(bytes20(uint160(uint256(keccak256("hevm cheat code"))))));
+  /// @notice Creates a runner backend
+  function runner() public returns (Runner) {
+    return new Runner();
+  }
 
   /// @notice Internal Helper for Comparing Strings
   function compareStrings(string memory a, string memory b) internal pure returns (bool) {
     return (keccak256(abi.encodePacked((a))) == keccak256(abi.encodePacked((b))));
   }
 
-  /// @notice Encodes an image at a url into a base64 string
-  function run(string memory input) internal returns (uint256 success, bytes memory data) {
+  /// @notice Converts raw string into a command
+  function from(string memory input) public returns (Command) {
+    // TODO: parse expressive commands
+
     // Grab the first command from the input
     strings.slice memory s = input.toSlice();
     strings.slice memory delim = " ".toSlice();
@@ -35,45 +51,62 @@ library Unix {
 
     // Match on commands
     if (compareStrings(command, "echo")) {
-      return exec("echo", args);
+      if (args.toSlice().contains("-n".toSlice())) {
+        return new Echo().n().stdout(args.toSlice().beyond("-n".toSlice()).toString());
+      } else {
+        return new Echo().stdout(args);
+      }
     }
     if (compareStrings(command, "rm")) {
-      return exec("rm", args);
-    }
-    if (compareStrings(command, "pwd")) {
-      return exec("pwd");
-    }
-    if (compareStrings(command, "wget")) {
-      return exec("wget", args);
+      console2.log("Created RM Command");
+      return new Rm().stdout(args);
     }
     if (compareStrings(command, "sed")) {
-      return exec("sed", args);
+      return new Sed().i(); // .stdout(args);
     }
-    if (compareStrings(command, "grep")) {
-      return exec("grep", args);
-    }
+    // if (compareStrings(command, "pwd")) {
+    //   return exec("pwd");
+    // }
+    // if (compareStrings(command, "wget")) {
+    //   return exec("wget", args);
+    // }
+    // if (compareStrings(command, "grep")) {
+    //   return exec("grep", args);
+    // }
 
-    // Otherwise, fail with unsupported command
-    return (0, abi.encode("FAILURE: Command ", command, " not found!"));
+    Command new_cmd = new Command();
+    new_cmd.setRaw(input);
+    return new_cmd;
   }
 
-  /// @notice Executes a script with no args
-  function exec(string memory script) internal returns (uint256, bytes memory) {
-    string[] memory cmds = new string[](2);
-    cmds[0] = string.concat("./src/", script, ".sh");
-    return decode(vm.ffi(cmds));
+  /// @notice Returns a new instance of Sed
+  function sed() public returns (Sed) {
+    return new Sed();
   }
 
-  /// @notice Executes a bash script by name with one param
-  function exec(string memory script, string memory params) internal returns (uint256, bytes memory) {
-    string[] memory cmds = new string[](2);
-    cmds[0] = string.concat("./src/", script, ".sh");
-    cmds[1] = params;
-    return decode(vm.ffi(cmds));
+  /// @notice Returns a new instance of Echo
+  function echo() public returns (Echo) {
+    return new Echo();
   }
 
-  function decode(bytes memory data) internal pure returns (uint256, bytes memory) {
-    (uint256 success, bytes memory s) = abi.decode(data, (uint256, bytes));
-    return (success, s);
+  /// @notice Returns a new instance of Rm
+  function rm() public returns (Rm) {
+    return new Rm();
+  }
+
+  /// @notice Registers a new command with a new runner
+  /// @notice To execute the runner, call `run()` on the returned Runner
+  function register(Command cmd) public returns (Runner) {
+    return new Runner().register(cmd);
+  }
+
+  /// @notice Runs a command with a new runner
+  function run(Command cmd) public returns (uint256, bytes memory) {
+    return new Runner().register(cmd).run();
+  }
+
+  /// @notice Runs a raw command
+  function run(string memory raw) public returns (uint256, bytes memory) {
+    return new Runner().register(from(raw)).run();
   }
 }

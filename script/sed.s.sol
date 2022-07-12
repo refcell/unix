@@ -12,8 +12,8 @@ contract sed is Script {
   function setUp() public {}
 
   function run() public {
-      (uint256 success, bytes memory data) = "sed s/\\/// .gitignore".run();
-      require(success == 1, "SED_CMD_FAILED");
-      console2.log(string.concat("\n--> gitignore contents\n", string(data)));
+      // (uint256 success, bytes memory data) = "sed s/\\/// .gitignore".run();
+      // require(success == 1, "SED_CMD_FAILED");
+      // console2.log(string.concat("\n--> gitignore contents\n", string(data)));
   }
 }

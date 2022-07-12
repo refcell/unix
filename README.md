@@ -7,7 +7,7 @@ A **lightweight**, **extensible** [foundry](https://github.com/foundry-rs/foundr
 
 ## What?
 
-**unix** is an extensible wrapper for common unix shell commands. It provides a minimal api for interacting with shell commands from inside Solidity using [foundry](https://github.com/foundry-rs/foundry)'s [fii](https://book.getfoundry.sh/cheatcodes/ffi.html).
+**unix** is an extensible wrapper for common unix shell commands. It provides a minimal api for executing expressive shell commands from inside Solidity using [foundry](https://github.com/foundry-rs/foundry)'s [fii](https://book.getfoundry.sh/cheatcodes/ffi.html).
 
 
 ## Installation
@@ -33,13 +33,31 @@ import {Unix} from "unix/Unix.sol";
 using Unix for *;
 ```
 
-3. Run your shell commands:
+3. Run your shell commands. This can be done in two ways:
+
+a) Using strong typing **(recommended)**:
+```solidity
+// Echo "Hello World"
+(uint256 status, bytes memory data) = Unix.echo().stdout("Hello World").run();
+
+// Pipe file contents to another file
+// NOTE: Commands can be instantiated from a text string using `Command.from(<YOUR_STRING>)` _(see grep command below)_
+(uint256 status, bytes memory data) = Unix.cat().file("README.md").pipe(Command.from("grep \"Hello\")).run();
+```
+
+b) Using raw string commands.
 ```solidity
 // Cat a file
-(uint256 status, bytes memory data) = "cat \"README.md\"".run();
+(uint256 status, bytes memory data) = "cat README.md".run();
+// string(data) == <contents of README.md>
 
 // Echo a string
-(uint256 status, bytes memory data) = "echo \"Hello World\"".run();
+(uint256 status, bytes memory data) = "echo Hello World".run();
+// string(data) == "Hello World"
+
+// Print the working directory
+(uint256 status, bytes memory data) = "pwd".run();
+// string(data) == <working directory>
 ```
 
 We have provided extensive examples in [scripts](./script/) and further completeness is demonstrated in [tests](./test/Unix.t.sol).
@@ -72,5 +90,6 @@ We **do not give any warranties** and **will not be liable for any loss** incurr
 
 ## Acknowledgements
 
+- [Shannon](https://github.com/abigger87/shannon) _(SOON™)_
 - [Surl](https://github.com/memester-xyz/surl)
 - [Solenv](https://github.com/memester-xyz/solenv)
